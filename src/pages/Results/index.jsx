@@ -5,6 +5,8 @@ import { SurveyContext } from '../../utils/context'
 import colors from '../../utils/style/colors'
 import { useFetch, useTheme } from '../../utils/hooks'
 import { StyledLink, Loader } from '../../utils/style/Atoms'
+import { useSelector, useDispatch } from 'react-redux'
+import { getTheme } from '../../utils/selectors'
 
 const ResultsContainer = styled.div`
   display: flex;
@@ -72,7 +74,7 @@ export function formatJobList(title, listLength, index) {
 }
 
 function Results() {
-  const { theme } = useTheme()
+  const theme = useSelector(getTheme)
   const { answers } = useContext(SurveyContext)
   const queryParams = formatQueryParams(answers)
 

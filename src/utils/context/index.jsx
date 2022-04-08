@@ -1,12 +1,12 @@
 import React, { useState, createContext } from 'react'
+import { useSelector, useDispatch } from 'react-redux'
+import { getTheme } from '../../utils/selectors'
+import { toggleTheme } from '../../features/theme'
 
 export const ThemeContext = createContext()
 
 export const ThemeProvider = ({ children }) => {
-  const [theme, setTheme] = useState('light')
-  const toggleTheme = () => {
-    setTheme(theme === 'light' ? 'dark' : 'light')
-  }
+  const theme = useSelector(getTheme)
 
   return (
     <ThemeContext.Provider value={{ theme, toggleTheme }}>

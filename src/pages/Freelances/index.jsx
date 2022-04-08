@@ -4,6 +4,8 @@ import Card from '../../components/Card'
 import colors from '../../utils/style/colors'
 import { Loader } from '../../utils/style/Atoms'
 import { useFetch, useTheme } from '../../utils/hooks'
+import { getTheme } from '../../utils/selectors'
+import { useSelector, useDispatch } from 'react-redux'
 
 const CardsContainer = styled.div`
   display: grid;
@@ -36,7 +38,7 @@ const LoaderWrapper = styled.div`
 `
 
 function Freelances() {
-  const { theme } = useTheme()
+  const theme = useSelector(getTheme)
   const { data, isLoading, error } = useFetch(
     `http://localhost:8000/freelances`
   )
