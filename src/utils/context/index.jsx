@@ -1,5 +1,5 @@
 import React, { useState, createContext } from 'react'
-import { useSelector, useDispatch } from 'react-redux'
+import { useSelector } from 'react-redux'
 import { getTheme } from '../../utils/selectors'
 import { toggleTheme } from '../../features/theme'
 

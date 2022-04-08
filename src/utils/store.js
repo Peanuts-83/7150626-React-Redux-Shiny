@@ -1,5 +1,7 @@
 import { createStore, combineReducers } from "redux";
 import themeReducer from "../features/theme";
+import freelancesReducer from "../features/freelances";
+import idReducer from "../features/profile"
 
 
 // actions
@@ -13,6 +15,8 @@ import themeReducer from "../features/theme";
 */
 const reducer = combineReducers({
     theme: themeReducer,
+    freelances: freelancesReducer,
+    freelanceId: idReducer,
 })
 
 // Store

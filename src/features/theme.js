@@ -1,4 +1,6 @@
-// import produce from "immer";
+// THEME REDUCER & State & Actions
+
+// Constantes
 const TOGGLE_THEME = 'theme/toggle'
 const SET_THEME = 'theme/set'
 

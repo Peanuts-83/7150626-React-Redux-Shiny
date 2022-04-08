@@ -5,8 +5,8 @@ import styled from 'styled-components'
 import colors from '../../utils/style/colors'
 import { Loader } from '../../utils/style/Atoms'
 import { SurveyContext } from '../../utils/context'
-import { useFetch, useTheme } from '../../utils/hooks'
-import { useSelector, useDispatch } from 'react-redux'
+import { useFetch } from '../../utils/hooks'
+import { useSelector } from 'react-redux'
 import { getTheme } from '../../utils/selectors'
 
 const SurveyContainer = styled.div`

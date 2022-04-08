@@ -1,10 +1,9 @@
 import styled from 'styled-components'
 import colors from '../../utils/style/colors'
 import { StyledLink } from '../../utils/style/Atoms'
-import { useTheme } from '../../utils/hooks'
 import HomeIllustration from '../../assets/home-illustration.svg'
 import { getTheme } from '../../utils/selectors'
-import { useSelector, useDispatch } from 'react-redux'
+import { useSelector } from 'react-redux'
 
 const HomeWrapper = styled.div`
   display: flex;

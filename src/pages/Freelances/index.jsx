@@ -3,9 +3,10 @@ import { Link } from 'react-router-dom'
 import Card from '../../components/Card'
 import colors from '../../utils/style/colors'
 import { Loader } from '../../utils/style/Atoms'
-import { useFetch, useTheme } from '../../utils/hooks'
 import { getTheme } from '../../utils/selectors'
-import { useSelector, useDispatch } from 'react-redux'
+import { useSelector, useStore } from 'react-redux'
+import { useEffect } from 'react'
+import { fetchOrUpdateFreelances } from '../../features/freelances'
 
 const CardsContainer = styled.div`
   display: grid;
@@ -39,10 +40,11 @@ const LoaderWrapper = styled.div`
 
 function Freelances() {
   const theme = useSelector(getTheme)
-  const { data, isLoading, error } = useFetch(
-    `http://localhost:8000/freelances`
-  )
+  const store = useStore()
+  // const state = store.getState()
+  useEffect(() => {fetchOrUpdateFreelances(store)}, [store])
 
+  const { data, status, error } = useSelector(state => state.freelances)
   const freelancersList = data?.freelancersList
 
   if (error) {
@@ -55,7 +57,7 @@ function Freelances() {
       <PageSubtitle theme={theme}>
         Chez Shiny nous réunissons les meilleurs profils pour vous.
       </PageSubtitle>
-      {isLoading ? (
+      {status === 'pending' || status === 'updating' ? (
         <LoaderWrapper>
           <Loader theme={theme} data-testid="loader" />
         </LoaderWrapper>
