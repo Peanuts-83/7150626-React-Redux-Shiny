@@ -1,5 +1,5 @@
 import { selectFreelances } from '../utils/selectors'
-import { createAction, createReducer } from '@reduxjs/toolkit'
+import { createSlice } from '@reduxjs/toolkit'
 
 const initialState = {
   status: 'void',
@@ -7,15 +7,11 @@ const initialState = {
   error: null,
 }
 
-// actions
-const freelancesFetching = createAction('freelances/fetching')
-const freelancesResolved = createAction('freelances/resolved')
-const freelancesRejected = createAction('freelances/rejected')
-
-// reducer
-export default createReducer(initialState, builder => {
-  builder
-    .addCase(freelancesFetching, (draft, action) => {
+const {actions, reducer} = createSlice({
+  name: 'freelances',
+  initialState: initialState,
+  reducers: {
+    fetching: (draft) => {
       if (draft.status === 'void') {
         // on passe en pending
         draft.status = 'pending'
@@ -36,8 +32,8 @@ export default createReducer(initialState, builder => {
       }
       // sinon l'action est ignorée
       return
-    })
-    .addCase(freelancesResolved, (draft, action) => {
+    },
+    resolved: (draft, action) => {
       if (draft.status === 'pending' || draft.status === 'updating') {
         // on passe en resolved et on sauvegarde les données
         draft.data = action.payload
@@ -46,8 +42,8 @@ export default createReducer(initialState, builder => {
       }
       // sinon l'action est ignorée
       return
-    })
-    .addCase(freelancesRejected, (draft, action) => {
+    },
+    rejected: (draft, action) => {
       if (draft.status === 'pending' || draft.status === 'updating') {
         // on passe en rejected, on sauvegarde l'erreur et on supprime les données
         draft.status = 'rejected'
@@ -56,8 +52,10 @@ export default createReducer(initialState, builder => {
         return
       }
       return
-    })
+    },
+  }
 })
+
 
 // Redux-Thunk
 export async function fetchOrUpdateFreelances(dispatch, getState) {
@@ -70,15 +68,18 @@ export async function fetchOrUpdateFreelances(dispatch, getState) {
   }
   // On peut modifier le state en envoyant des actions avec store.dispatch()
   // ici on indique que la requête est en cours
-  dispatch(freelancesFetching())
+  dispatch(fetching())
   try {
     // on utilise fetch pour faire la requête
     const response = await fetch('http://localhost:8000/freelances')
     const data = await response.json()
     // si la requête fonctionne, on envoie les données à redux avec l'action resolved
-    dispatch(freelancesResolved(data))
+    dispatch(resolved(data))
   } catch (error) {
     // en cas d'erreur on infirme le store avec l'action rejected
-    dispatch(freelancesRejected(error))
+    dispatch(rejected(error))
   }
 }
+
+const {fetching, resolved, rejected} = actions
+export default reducer

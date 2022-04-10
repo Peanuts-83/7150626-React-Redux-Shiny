@@ -1,4 +1,4 @@
-import { createAction, createReducer } from '@reduxjs/toolkit'
+import { createSlice } from '@reduxjs/toolkit'
 import { selectFreelance } from '../utils/selectors'
 
 // le state initial de cette feature est un objet vide
@@ -7,104 +7,60 @@ const initialState = {
   // 3: { status: 'void' }
 }
 
-// les actions contiennent l'Id du freelance en payload
-const freelanceFetching = createAction('freelance/fetching', freelanceId => ({
-  payload: { freelanceId }
-}))
-const freelanceResolved = createAction('freelance/resolved', (freelanceId, data) => ({
-  payload: { freelanceId, data }
-}))
-const freelanceRejected = createAction('freelance/rejected', (freelanceId, error) => ({
-  payload: { freelanceId, error }
-}))
-
-// reducer
-export default createReducer(initialState, builder => {
-  builder
-    .addCase(freelanceFetching, (draft, action) => {
-      const { payload } = action
-      if (draft[payload.freelanceId] === undefined) {
-        draft[payload.freelanceId] = { status: 'void' }
-      }
-      if (draft[payload.freelanceId].status === 'void') {
-        draft[payload.freelanceId].status = 'pending'
+const {actions, reducer} = createSlice({
+  name: 'freelance',
+  initialState: initialState,
+  reducers: {
+    fetching: {
+      prepare: (freelanceId) => ({payload: {freelanceId}}),
+      reducer: (draft, action) => {
+        const { payload } = action
+        if (draft[payload.freelanceId] === undefined) {
+          draft[payload.freelanceId] = { status: 'void' }
+        }
+        if (draft[payload.freelanceId].status === 'void') {
+          draft[payload.freelanceId].status = 'pending'
+          return
+        }
+        if (draft[payload.freelanceId].status === 'rejected') {
+          draft[payload.freelanceId].error = null
+          draft[payload.freelanceId].status = 'pending'
+          return
+        }
+        if (draft[payload.freelanceId].status === 'resolved') {
+          draft[payload.freelanceId].status = 'updating'
+          return
+        }
         return
-      }
-      if (draft[payload.freelanceId].status === 'rejected') {
-        draft[payload.freelanceId].error = null
-        draft[payload.freelanceId].status = 'pending'
-        return
-      }
-      if (draft[payload.freelanceId].status === 'resolved') {
-        draft[payload.freelanceId].status = 'updating'
-        return
-      }
-    })
-    .addCase(freelanceResolved, (draft, action) => {
-      const { payload } = action
-      if (draft[payload.freelanceId].status === 'pending' || draft[payload.freelanceId].status === 'updating') {
-        draft[payload.freelanceId].status = 'resolved'
-        draft[payload.freelanceId].data = payload.data
-        return
-      }
-    })
-    .addCase(freelanceRejected, (draft, action) => {
-      const { payload } = action
-      if (draft[payload.freelanceId].status === 'pending' || draft[payload.freelanceId].status === 'updating') {
-        draft[payload.freelanceId].status = 'rejected'
-        draft[payload.freelanceId].data = null
-        draft[payload.freelanceId].error = payload.error
-        return
-      }
-
-    })
-})
-
-/*
-{
-  const { type, payload } = action
-  return produce(state, (draft) => {
-    // si l'action est une des action de freelance
-
-    if (type === 'freelance/fetching' || type === 'freelance/resolved' || type === 'freelance/rejected') {
-      // on vérifie que le state contient la propriété correspondante à l'Id du freelance
-      if (draft[payload.freelanceId] === undefined) {
-        // si elle n'existe pas, on l'initialise avec void
-        draft[payload.freelanceId] = { status: 'void' }
-      }
-    }
-        return
-      }
-      case 'freelance/resolved': {
-        if (
-          draft[payload.freelanceId].status === 'pending' ||
-          draft[payload.freelanceId].status === 'updating'
-        ) {
-          draft[payload.freelanceId].data = payload.data
+      },
+    },
+    resolved: {
+      prepare: (freelanceId, data) => ({payload: {freelanceId, data}}),
+      reducer: (draft, action) => {
+        const { payload } = action
+        if (draft[payload.freelanceId].status === 'pending' || draft[payload.freelanceId].status === 'updating') {
           draft[payload.freelanceId].status = 'resolved'
+          draft[payload.freelanceId].data = payload.data
           return
         }
         return
-      }
-      case 'freelance/rejected': {
-        if (
-          draft[payload.freelanceId].status === 'pending' ||
-          draft[payload.freelanceId].status === 'updating'
-        ) {
-          draft[payload.freelanceId].error = payload.error
-          draft[payload.freelanceId].data = null
+      },
+    },
+    rejected: {
+      prepare: (freelanceId, error) => ({payload: {freelanceId, error}}),
+      reducer: (draft, action) => {
+        const { payload } = action
+        if (draft[payload.freelanceId].status === 'pending' || draft[payload.freelanceId].status === 'updating') {
           draft[payload.freelanceId].status = 'rejected'
+          draft[payload.freelanceId].data = null
+          draft[payload.freelanceId].error = payload.error
           return
         }
         return
-      }
-      default:
-        return
-    }
-  })
-}
-*/
-
+      },
+    },
+  }
+})
 
 // Redux-Thunk
 export function fetchOrUpdateFreelance(freelanceId) {
@@ -114,15 +70,19 @@ export function fetchOrUpdateFreelance(freelanceId) {
     if (status === 'pending' || status === 'updating') {
       return
     }
-    dispatch(freelanceFetching(freelanceId))
+    dispatch(fetching(freelanceId))
     try {
       const response = await fetch(
         `http://localhost:8000/freelance?id=${freelanceId}`
       )
       const data = await response.json()
-      dispatch(freelanceResolved(freelanceId, data))
+      dispatch(resolved(freelanceId, data))
     } catch (error) {
-      dispatch(freelanceRejected(freelanceId, error))
+      dispatch(rejected(freelanceId, error))
     }
   }
 }
+
+
+const {fetching, resolved, rejected} = actions
+export default reducer
