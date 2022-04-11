@@ -1,4 +1,3 @@
-import { selectFreelance } from '../utils/selectors'
 import { createSlice } from '@reduxjs/toolkit'
 
 // le state initial de cette feature est un objet vide
@@ -7,27 +6,27 @@ const initialState = {
   // 3: { status: 'void' }
 }
 
-export function fetchOrUpdateFreelance(freelanceId) {
-  // on retourne un thunk
-  return async (dispatch, getState) => {
-    // ...
-    const selectFreelanceById = selectFreelance(freelanceId)
-    const status = selectFreelanceById(getState()).status
-    if (status === 'pending' || status === 'updating') {
-      return
-    }
-    dispatch(actions.fetching(freelanceId))
-    try {
-      const response = await fetch(
-        `http://localhost:8000/freelance?id=${freelanceId}`
-      )
-      const data = await response.json()
-      dispatch(actions.resolved(freelanceId, data))
-    } catch (error) {
-      dispatch(actions.rejected(freelanceId, error))
-    }
-  }
-}
+// export function fetchOrUpdateFreelance(freelanceId) {
+//   // on retourne un thunk
+//   return async (dispatch, getState) => {
+//     // ...
+//     const selectFreelanceById = selectFreelance(freelanceId)
+//     const status = selectFreelanceById(getState()).status
+//     if (status === 'pending' || status === 'updating') {
+//       return
+//     }
+//     dispatch(actions.fetching(freelanceId))
+//     try {
+//       const response = await fetch(
+//         `http://localhost:8000/freelance?id=${freelanceId}`
+//       )
+//       const data = await response.json()
+//       dispatch(actions.resolved(freelanceId, data))
+//     } catch (error) {
+//       dispatch(actions.rejected(freelanceId, error))
+//     }
+//   }
+// }
 
 function setVoidIfUndefined(draft, freelanceId) {
   if (draft[freelanceId] === undefined) {

@@ -1,5 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit'
-import { selectSurvey } from '../utils/selectors'
+// import { selectSurvey } from '../utils/selectors'
 
 const initialState = {
   status: 'void',
@@ -7,20 +7,20 @@ const initialState = {
   error: null,
 }
 
-export async function fetchOrUpdateSurvey(dispatch, getState) {
-  const status = selectSurvey(getState()).status
-  if (status === 'pending' || status === 'updating') {
-    return
-  }
-  dispatch(actions.fetching())
-  try {
-    const response = await fetch('http://localhost:8000/survey')
-    const data = await response.json()
-    dispatch(actions.resolved(data))
-  } catch (error) {
-    dispatch(actions.rejected(error))
-  }
-}
+// export async function fetchOrUpdateSurvey(dispatch, getState) {
+//   const status = selectSurvey(getState()).status
+//   if (status === 'pending' || status === 'updating') {
+//     return
+//   }
+//   dispatch(actions.fetching())
+//   try {
+//     const response = await fetch('http://localhost:8000/survey')
+//     const data = await response.json()
+//     dispatch(actions.resolved(data))
+//   } catch (error) {
+//     dispatch(actions.rejected(error))
+//   }
+// }
 
 const { actions, reducer } = createSlice({
   name: 'survey',

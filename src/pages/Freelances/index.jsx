@@ -3,10 +3,9 @@ import { Link } from 'react-router-dom'
 import Card from '../../components/Card'
 import colors from '../../utils/style/colors'
 import { Loader } from '../../utils/style/Atoms'
-import { useDispatch, useSelector } from 'react-redux'
-import { selectFreelances, selectTheme } from '../../utils/selectors'
-import { useEffect } from 'react'
-import { fetchOrUpdateFreelances } from '../../features/freelances'
+import { useSelector } from 'react-redux'
+import { selectTheme } from '../../utils/selectors'
+import {useQuery} from 'react-query'
 
 const CardsContainer = styled.div`
   display: grid;
@@ -39,21 +38,15 @@ const LoaderWrapper = styled.div`
 `
 
 function Freelances() {
-  // On utilise dispatch pour exécuter un thunk
-  const dispatch = useDispatch()
-
-  // on utilise useEffect pour lancer la requête au chargement du composant
-  useEffect(() => {
-    // On envoie le thunk à dispatch
-    // C'est Redux-Thunk qui va s'occuper de l'exécuter pour nous
-    dispatch(fetchOrUpdateFreelances)
-  }, [dispatch])
-
   const theme = useSelector(selectTheme)
 
-  const freelances = useSelector(selectFreelances)
+  const {data, isLoading, error} = useQuery('freelances', async () => {
+    const response = await fetch('http://localhost:8000/freelances')
+    const data= await response.json()
+    return data
+  })
 
-  if (freelances.status === 'rejected') {
+  if (error) {
     return <span>Il y a un problème</span>
   }
 
@@ -63,13 +56,13 @@ function Freelances() {
       <PageSubtitle theme={theme}>
         Chez Shiny nous réunissons les meilleurs profils pour vous.
       </PageSubtitle>
-      {freelances.status === 'pending' || freelances.status === 'void' ? (
+      {isLoading ? (
         <LoaderWrapper>
           <Loader theme={theme} data-testid="loader" />
         </LoaderWrapper>
       ) : (
         <CardsContainer>
-          {freelances.data.freelancersList.map((profile) => (
+          {data.freelancersList.map((profile) => (
             <Link key={`freelance-${profile.id}`} to={`/profile/${profile.id}`}>
               <Card
                 label={profile.job}
