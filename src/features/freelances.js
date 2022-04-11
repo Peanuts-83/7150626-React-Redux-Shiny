@@ -1,5 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit'
-import { selectFreelances } from '../utils/selectors'
+// import { selectFreelances } from '../utils/selectors'
 
 // Le state initial de la feature freelances
 const initialState = {
@@ -11,22 +11,22 @@ const initialState = {
   error: null,
 }
 
-export async function fetchOrUpdateFreelances(dispatch, getState) {
-  const status = selectFreelances(getState()).status
-  if (status === 'pending' || status === 'updating') {
-    // on stop la fonction pour éviter de récupérer plusieurs fois la même donnée
-    return
-  }
-  dispatch(actions.fetching())
-  try {
-    // on utilise fetch pour faire la requête
-    const response = await fetch('http://localhost:8000/freelances')
-    const data = await response.json()
-    dispatch(actions.resolved(data))
-  } catch (error) {
-    dispatch(actions.rejected(error))
-  }
-}
+// export async function fetchOrUpdateFreelances(dispatch, getState) {
+//   const status = selectFreelances(getState()).status
+//   if (status === 'pending' || status === 'updating') {
+//     // on stop la fonction pour éviter de récupérer plusieurs fois la même donnée
+//     return
+//   }
+//   dispatch(actions.fetching())
+//   try {
+//     // on utilise fetch pour faire la requête
+//     const response = await fetch('http://localhost:8000/freelances')
+//     const data = await response.json()
+//     dispatch(actions.resolved(data))
+//   } catch (error) {
+//     dispatch(actions.rejected(error))
+//   }
+// }
 
 const { actions, reducer } = createSlice({
   name: 'freelances',
