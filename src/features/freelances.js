@@ -47,7 +47,7 @@ const { actions, reducer } = createSlice({
         return
       }
       // si le statut est resolved
-      if (draft.status === 'resolved') {
+      if (draft.status === 'resolved' || draft.status === 'pending') {
         // on passe en updating (requête en cours mais des données sont déjà présentent)
         draft.status = 'updating'
         return
@@ -84,3 +84,4 @@ const { actions, reducer } = createSlice({
 })
 
 export default reducer
+export const { fetching, resolved, rejected } = actions

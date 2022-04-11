@@ -2,7 +2,7 @@ import Results, { formatQueryParams, formatJobList } from './'
 import { rest } from 'msw'
 import { setupServer } from 'msw/node'
 import { waitForElementToBeRemoved, screen } from '@testing-library/react'
-import { render } from '../../utils/test'
+import { render } from '../../utils/test/index'
 
 describe('The formatJobList function', () => {
   it('should add a comma to a word', () => {
@@ -49,7 +49,7 @@ afterEach(() => server.resetHandlers())
 afterAll(() => server.close())
 
 describe('The Results component', () => {
-  it.skip('should display the results after the data is loaded', async () => {
+  it('should display the results after the data is loaded', async () => {
     render(<Results />)
     await waitForElementToBeRemoved(() => screen.getByTestId('loader'))
     const jobTitleElements = screen.getAllByTestId('job-title')

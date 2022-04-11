@@ -30,11 +30,26 @@ beforeAll(() => server.listen())
 afterEach(() => server.resetHandlers())
 afterAll(() => server.close())
 
-it.skip('Should display freelancers names after loader is removed', async () => {
+it('Should display freelancers names after loader is removed', async () => {
   render(<Freelances />)
 
   await waitForElementToBeRemoved(() => screen.getByTestId('loader'))
   expect(screen.getByText('Harry Potter')).toBeInTheDocument()
   expect(screen.getByText('Hermione Granger')).toBeInTheDocument()
+  expect(screen.queryByText('Trouvez votre prestataire')).toBeInTheDocument()
   expect(screen.queryByTestId('loader')).not.toBeInTheDocument()
+})
+it('Should display error message on "rejected" status', async () => {
+  const server = setupServer(
+    rest.get('http://localhost:8000/freelances', (req, res, ctx) => {
+      return res(ctx.json({ freelancersList: null }))
+    })
+    )
+    server.listen()
+    render(<Freelances />)
+    await waitForElementToBeRemoved(() => screen.getByTestId('loader'))
+    expect(screen.queryByText('Trouvez votre prestataire')).not.toBeInTheDocument()
+    expect(screen.queryByTestId('loader')).not.toBeInTheDocument()
+    server.resetHandlers()
+    server.close()
 })

@@ -63,3 +63,4 @@ const { actions, reducer } = createSlice({
 })
 
 export default reducer
+export const {fetching, resolved, rejected} = actions
