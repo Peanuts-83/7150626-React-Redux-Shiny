@@ -93,11 +93,7 @@ function Profile() {
   const { id: freelanceId } = useParams()
   // const dispatch = useDispatch()
 
-  const { data } = useQuery(['freelance', freelanceId], async () => {
-    const response = await fetch(`http://localhost:8000/freelance?id=${freelanceId}`)
-    const data = await response.json()
-    return data
-  })
+  const { data } = useQuery(['freelance', freelanceId])
 
   const profileData = data?.freelanceData ?? {}
 

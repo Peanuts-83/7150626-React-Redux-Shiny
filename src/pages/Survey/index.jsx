@@ -71,11 +71,7 @@ function Survey() {
 
   const answers = useSelector(selectAnswers)
   const dispatch = useDispatch()
-  const survey = useQuery('survey', async() => {
-    const response = await fetch('http://localhost:8000/survey')
-    const data = await response.json()
-    return data
-  })
+  const survey = useQuery('survey')
 
   function saveReply(answer) {
     dispatch(saveAnswer({ questionNumber, answer }))

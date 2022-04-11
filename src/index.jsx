@@ -15,7 +15,27 @@ import store from './utils/store'
 import { QueryClientProvider, QueryClient } from 'react-query'
 import { ReactQueryDevtools } from 'react-query/devtools'
 
-const queryClient = new QueryClient()
+const defaultQueryFn = async({queryKey}) => {
+  if (queryKey.length <= 1) {
+    const data = await fetch(`http://localhost:8000/${queryKey[0]}`)
+    return data.json()
+  } else {
+    let keys = ''
+    queryKey.forEach((key, index) => {
+      keys += index === 0 ? `${key}/` : `?id=${key}`
+    })
+    const data = await fetch(`http://localhost:8000/${keys}`)
+    return data.json()
+  }
+}
+
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      queryFn: defaultQueryFn,
+    }
+  }
+})
 
 ReactDOM.render(
   <QueryClientProvider client={queryClient}>

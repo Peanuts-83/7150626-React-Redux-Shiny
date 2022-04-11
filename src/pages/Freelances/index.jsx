@@ -40,11 +40,7 @@ const LoaderWrapper = styled.div`
 function Freelances() {
   const theme = useSelector(selectTheme)
 
-  const {data, isLoading, error} = useQuery('freelances', async () => {
-    const response = await fetch('http://localhost:8000/freelances')
-    const data= await response.json()
-    return data
-  })
+  const {data, isLoading, error} = useQuery('freelances')
 
   if (error) {
     return <span>Il y a un problème</span>
